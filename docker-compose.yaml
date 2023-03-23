@@ -1,0 +1,81 @@
+version: "3.9"
+
+x-app: &app
+  env_file:
+    - ./.env
+  restart: always
+
+services:
+  auth-api:
+    build:
+      context: ./api_grpc_server
+    <<: *app
+    volumes:
+      - ./api_grpc_server:/usr/src/app/
+    ports:
+      - "8080:8080"
+    depends_on:
+      - auth-database
+
+  auth-grpc:
+    build:
+      context: ./api_grpc_server
+    <<: *app
+    volumes:
+      - ./api_grpc_server:/usr/src/app/
+    environment:
+      - RUN_MODE=GRPC
+    ports:
+      - "${GRPC_PORT}:${GRPC_PORT}"
+    depends_on:
+      - auth-database
+
+  auth-database:
+    image: postgres:14
+    <<: *app
+    volumes:
+      - auth_db_data:/var/lib/postgresql/data/
+    environment:
+      TZ: "Europe/Moscow"
+      PGTZ: "Europe/Moscow"
+    ports:
+      - "5432:5432"
+
+  auth-redis:
+    image: redis:6.0-alpine
+    volumes:
+      - auth_redis_volume:/data
+    <<: *app
+    command:
+      - "redis-server"
+      - "--databases 2"
+      - "--save 900 1"
+      - "--save 300 10"
+      - "--save 60 10000"
+    ports:
+      - "6379:6379"
+
+  redis-commander:
+    container_name: redis-commander
+    hostname: redis-commander
+    image: rediscommander/redis-commander:latest
+    restart: always
+    environment:
+      - REDIS_HOSTS=local:auth-redis:6379
+    ports:
+      - "8081:8081"
+
+  simple_api:
+    build:
+      context: ./api_simple
+    <<: *app
+    volumes:
+      - ./api_simple:/usr/src/app/
+    ports:
+      - "8085:8085"
+    depends_on:
+      - auth-database
+
+volumes:
+  auth_db_data:
+  auth_redis_volume:

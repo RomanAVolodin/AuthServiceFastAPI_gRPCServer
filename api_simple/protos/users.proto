@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+
+message GetUserRequest {
+  string id = 1;
+}
+
+message GetMultipleUserRequest {
+  repeated string ids = 1;
+}
+
+
+message UserResponse {
+    string id = 1;
+    string email = 2;
+    string first_name = 3;
+    string last_name = 4;
+    bool is_active = 5;
+    string created_at = 6;
+    string role = 7;
+}
+
+message MultipleUserResponse {
+  repeated UserResponse users = 1;
+}
+
+service Detailer {
+  rpc DetailsById (GetUserRequest) returns (UserResponse) {}
+  rpc MultipleDetailsByIds (GetMultipleUserRequest) returns (MultipleUserResponse) {}
+}
