@@ -1,3 +1,4 @@
+from typing import Annotated
 from uuid import UUID
 
 import uvicorn
@@ -9,7 +10,7 @@ from core.grpc import users_pb2, users_pb2_grpc
 import grpc
 from google.protobuf.json_format import MessageToDict
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Body
 
 app = FastAPI()
 
@@ -34,7 +35,11 @@ async def users(user_id: UUID):
     "a184c3b4-1038-418c-bd50-4405bb813154",
     "bc85cf72-c892-4083-ade4-9b371c1c39eb"]""",
 )
-async def users(ids: list[UUID]):
+async def users(
+    ids: Annotated[
+        list[UUID], Body(example=['a184c3b4-1038-418c-bd50-4405bb813154', 'bc85cf72-c892-4083-ade4-9b371c1c39eb'])
+    ]
+):
     async with grpc.aio.insecure_channel(f'{settings.grpc_host}:{settings.grpc_port}') as channel:
         stub = users_pb2_grpc.DetailerStub(channel)
         request = users_pb2.GetMultipleUserRequest(ids=[str(user_id) for user_id in ids])
@@ -43,8 +48,7 @@ async def users(ids: list[UUID]):
 
 
 @app.get(
-    '/all-users',
-    description='Список всех пользователей',
+    '/all-users', description='Список всех пользователей',
 )
 async def all_users():
     async with grpc.aio.insecure_channel(f'{settings.grpc_host}:{settings.grpc_port}') as channel:

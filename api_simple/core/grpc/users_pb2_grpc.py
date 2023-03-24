@@ -15,20 +15,20 @@ class DetailerStub(object):
             channel: A grpc.Channel.
         """
         self.DetailsById = channel.unary_unary(
-                '/Detailer/DetailsById',
-                request_serializer=users__pb2.GetUserRequest.SerializeToString,
-                response_deserializer=users__pb2.UserResponse.FromString,
-                )
+            '/Detailer/DetailsById',
+            request_serializer=users__pb2.GetUserRequest.SerializeToString,
+            response_deserializer=users__pb2.UserResponse.FromString,
+        )
         self.MultipleDetailsByIds = channel.unary_unary(
-                '/Detailer/MultipleDetailsByIds',
-                request_serializer=users__pb2.GetMultipleUserRequest.SerializeToString,
-                response_deserializer=users__pb2.MultipleUserResponse.FromString,
-                )
+            '/Detailer/MultipleDetailsByIds',
+            request_serializer=users__pb2.GetMultipleUserRequest.SerializeToString,
+            response_deserializer=users__pb2.MultipleUserResponse.FromString,
+        )
         self.GetAllUsers = channel.unary_unary(
-                '/Detailer/GetAllUsers',
-                request_serializer=users__pb2.GetAllUsersRequest.SerializeToString,
-                response_deserializer=users__pb2.MultipleUserResponse.FromString,
-                )
+            '/Detailer/GetAllUsers',
+            request_serializer=users__pb2.GetAllUsersRequest.SerializeToString,
+            response_deserializer=users__pb2.MultipleUserResponse.FromString,
+        )
 
 
 class DetailerServicer(object):
@@ -55,78 +55,113 @@ class DetailerServicer(object):
 
 def add_DetailerServicer_to_server(servicer, server):
     rpc_method_handlers = {
-            'DetailsById': grpc.unary_unary_rpc_method_handler(
-                    servicer.DetailsById,
-                    request_deserializer=users__pb2.GetUserRequest.FromString,
-                    response_serializer=users__pb2.UserResponse.SerializeToString,
-            ),
-            'MultipleDetailsByIds': grpc.unary_unary_rpc_method_handler(
-                    servicer.MultipleDetailsByIds,
-                    request_deserializer=users__pb2.GetMultipleUserRequest.FromString,
-                    response_serializer=users__pb2.MultipleUserResponse.SerializeToString,
-            ),
-            'GetAllUsers': grpc.unary_unary_rpc_method_handler(
-                    servicer.GetAllUsers,
-                    request_deserializer=users__pb2.GetAllUsersRequest.FromString,
-                    response_serializer=users__pb2.MultipleUserResponse.SerializeToString,
-            ),
+        'DetailsById': grpc.unary_unary_rpc_method_handler(
+            servicer.DetailsById,
+            request_deserializer=users__pb2.GetUserRequest.FromString,
+            response_serializer=users__pb2.UserResponse.SerializeToString,
+        ),
+        'MultipleDetailsByIds': grpc.unary_unary_rpc_method_handler(
+            servicer.MultipleDetailsByIds,
+            request_deserializer=users__pb2.GetMultipleUserRequest.FromString,
+            response_serializer=users__pb2.MultipleUserResponse.SerializeToString,
+        ),
+        'GetAllUsers': grpc.unary_unary_rpc_method_handler(
+            servicer.GetAllUsers,
+            request_deserializer=users__pb2.GetAllUsersRequest.FromString,
+            response_serializer=users__pb2.MultipleUserResponse.SerializeToString,
+        ),
     }
-    generic_handler = grpc.method_handlers_generic_handler(
-            'Detailer', rpc_method_handlers)
+    generic_handler = grpc.method_handlers_generic_handler('Detailer', rpc_method_handlers)
     server.add_generic_rpc_handlers((generic_handler,))
 
 
- # This class is part of an EXPERIMENTAL API.
+# This class is part of an EXPERIMENTAL API.
 class Detailer(object):
     """Missing associated documentation comment in .proto file."""
 
     @staticmethod
-    def DetailsById(request,
+    def DetailsById(
+        request,
+        target,
+        options=(),
+        channel_credentials=None,
+        call_credentials=None,
+        insecure=False,
+        compression=None,
+        wait_for_ready=None,
+        timeout=None,
+        metadata=None,
+    ):
+        return grpc.experimental.unary_unary(
+            request,
             target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/Detailer/DetailsById',
+            '/Detailer/DetailsById',
             users__pb2.GetUserRequest.SerializeToString,
             users__pb2.UserResponse.FromString,
-            options, channel_credentials,
-            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+        )
 
     @staticmethod
-    def MultipleDetailsByIds(request,
+    def MultipleDetailsByIds(
+        request,
+        target,
+        options=(),
+        channel_credentials=None,
+        call_credentials=None,
+        insecure=False,
+        compression=None,
+        wait_for_ready=None,
+        timeout=None,
+        metadata=None,
+    ):
+        return grpc.experimental.unary_unary(
+            request,
             target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/Detailer/MultipleDetailsByIds',
+            '/Detailer/MultipleDetailsByIds',
             users__pb2.GetMultipleUserRequest.SerializeToString,
             users__pb2.MultipleUserResponse.FromString,
-            options, channel_credentials,
-            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+        )
 
     @staticmethod
-    def GetAllUsers(request,
+    def GetAllUsers(
+        request,
+        target,
+        options=(),
+        channel_credentials=None,
+        call_credentials=None,
+        insecure=False,
+        compression=None,
+        wait_for_ready=None,
+        timeout=None,
+        metadata=None,
+    ):
+        return grpc.experimental.unary_unary(
+            request,
             target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/Detailer/GetAllUsers',
+            '/Detailer/GetAllUsers',
             users__pb2.GetAllUsersRequest.SerializeToString,
             users__pb2.MultipleUserResponse.FromString,
-            options, channel_credentials,
-            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+        )

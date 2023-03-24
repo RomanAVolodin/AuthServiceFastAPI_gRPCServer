@@ -33,7 +33,7 @@ def create_fake_users(amount: int):
                     email=fake.ascii_company_email(),
                     password='123123',
                     first_name=fake.first_name(),
-                    last_name=fake.last_name()
+                    last_name=fake.last_name(),
                 )
                 await users_crud.create(db=session, obj_in=user)
                 print(f'User created  {user}!')
