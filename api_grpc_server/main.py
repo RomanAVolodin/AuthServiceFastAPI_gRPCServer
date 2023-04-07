@@ -38,14 +38,12 @@ async def startup():
     redis_db.redis = Redis(host=settings.redis.host, port=settings.redis.port, db=0, decode_responses=True)
     if settings.debug_mode:
         from models.user import User
-
         await create_database()
 
 
 @app.on_event('shutdown')
 async def shutdown():
-    ...
-
+    await redis_db.redis.close()
 
 @AuthJWT.load_config
 def get_config():
