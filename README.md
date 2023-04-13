@@ -15,7 +15,7 @@ docker-compose exec auth-api python manage.py --help
 docker-compose exec auth-api python manage.py create-admin admin@mail.ru 123123 Ivan Ivanov
 ```
 
-После этого можно логиниться им в http://localhost:8080/api/openapi#/
+### После этого можно логиниться им в http://localhost:8080/api/openapi#/ и в http://localhost:8085/docs#/ с помощью Access токена, и в админке  Django просто с его логином и паролем.
 
 ### Создание фейковых пользователей:
 Из контейнера: `python manage.py create-fake-users 15`
@@ -53,6 +53,14 @@ import users_pb2 as users__pb2` ---> `from . import users_pb2 as users__pb2
 
 http://localhost:8080/api/openapi#/
 
-### API мелкое приложение для пробы gRPC клиента
+### API мелкое приложение для пробы gRPC клиента (требует авторизации, пользователи из предыдущего сервиса)
 
 http://localhost:8085/docs
+
+### Django админка с авторизацией через сервис авторизации
+Создаем админа 
+```bash
+docker-compose exec auth-api python manage.py create-admin admin@mail.ru 123123 Ivan Ivanov
+```
+и входим с этим email и паролем в админку
+http://localhost:8081/admin/

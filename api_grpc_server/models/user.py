@@ -62,7 +62,7 @@ class LoginHistory(Base):
 
     user = relationship('User', uselist=False, back_populates='history')
 
-    def __init__(self, user_id: UUID, user_agent: str, user_ip: str, access_token: str, refresh_token: str) -> None:
+    def __init__(self, user_id: UUID, user_agent: str, user_ip: str, access_token: str, refresh_token: str,) -> None:
         self.user_id = user_id
         self.user_agent = user_agent
         self.user_ip = user_ip

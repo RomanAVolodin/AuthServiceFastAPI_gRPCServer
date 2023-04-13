@@ -19,11 +19,11 @@ def roles_required(roles_list: list[UserRole]):
         async def wrapper(*args, **kwargs):
             user: UserInDb = kwargs.get('request').custom_user
             if not user or user.role not in [x.value for x in roles_list]:
-                raise AuthException('This operation is forbidden for you', status_code=status.HTTP_403_FORBIDDEN)
+                raise AuthException(
+                    'This operation is forbidden for you', status_code=status.HTTP_403_FORBIDDEN,
+                )
             return await function(*args, **kwargs)
-
         return wrapper
-
     return decorator
 
 

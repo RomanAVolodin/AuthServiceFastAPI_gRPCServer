@@ -5,7 +5,13 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from db.db import get_session
 from helpers.exceptions import AuthException
 from schemas.login_history import LoginHistoryCreateDto, LoginHistoryResponse
-from schemas.user import UserCreateDto, UserDataInToken, UserInDb, UserLoginDto, UserResponse
+from schemas.user import (
+    UserCreateDto,
+    UserDataInToken,
+    UserInDb,
+    UserLoginDto,
+    UserResponse,
+)
 from services.auth import AuthService, get_auth_service
 from services.login_history_repository import history_crud
 from services.user_repository import users_crud
@@ -23,9 +29,29 @@ async def create_user(user_dto: UserCreateDto, db: AsyncSession = Depends(get_se
     return user
 
 
+@router.post('/login_inner', response_model=UserResponse)
+async def login_inner(
+    request: Request, user_dto: UserLoginDto, db: AsyncSession = Depends(get_session),
+) -> UserResponse:
+    user = await users_crud.get_by_email(db=db, email=user_dto.email)
+    if not user:
+        raise AuthException('Invalid credentials', status_code=status.HTTP_401_UNAUTHORIZED)
+
+    if not user.check_password(user_dto.password):
+        raise AuthException('Bad email or password', status_code=status.HTTP_401_UNAUTHORIZED)
+
+    history = LoginHistoryCreateDto(
+        user_id=user.id, user_agent=request.headers.get('User-Agent'), user_ip=request.client.host,
+    )
+    await history_crud.create(
+        db=db, obj_in=history,
+    )
+    return user
+
+
 @router.post('/login')
 async def login(
-    request: Request, user_dto: UserLoginDto, authorize: AuthJWT = Depends(), db: AsyncSession = Depends(get_session)
+    request: Request, user_dto: UserLoginDto, authorize: AuthJWT = Depends(), db: AsyncSession = Depends(get_session),
 ) -> dict[str, str]:
     user = await users_crud.get_by_email(db=db, email=user_dto.email)
     if not user:

@@ -17,7 +17,7 @@ app = typer.Typer()
 def create_admin(email: str, password: str, first_name: str, last_name: str):
     async def create():
         async with async_session() as session:
-            admin = UserCreateDto(email=email, password=password, first_name=first_name, last_name=last_name)
+            admin = UserCreateDto(email=email, password=password, first_name=first_name, last_name=last_name,)
             item = await users_crud.create_admin(db=session, dto=admin)
             print(f'User created: {item}!')
 

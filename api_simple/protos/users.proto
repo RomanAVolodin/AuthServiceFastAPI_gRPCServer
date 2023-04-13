@@ -1,5 +1,6 @@
 syntax = "proto3";
 
+message GetAllUsersRequest {}
 
 message GetUserRequest {
   string id = 1;
@@ -24,7 +25,14 @@ message MultipleUserResponse {
   repeated UserResponse users = 1;
 }
 
+message GetUserByTokenRequest {
+  string token = 1;
+}
+
+
 service Detailer {
   rpc DetailsById (GetUserRequest) returns (UserResponse) {}
+  rpc DetailsByToken (GetUserByTokenRequest) returns (UserResponse) {}
   rpc MultipleDetailsByIds (GetMultipleUserRequest) returns (MultipleUserResponse) {}
+  rpc GetAllUsers (GetAllUsersRequest) returns (MultipleUserResponse) {}
 }

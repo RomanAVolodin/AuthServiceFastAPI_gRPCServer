@@ -13,7 +13,7 @@ services:
     volumes:
       - ./api_grpc_server:/usr/src/app/
     ports:
-      - "8080:8080"
+      - "${APP_PORT}:${APP_PORT}"
     depends_on:
       - auth-database
 
@@ -41,6 +41,39 @@ services:
     ports:
       - "5432:5432"
 
+  admin-database:
+    image: postgres:14
+    <<: *app
+    volumes:
+      - admin_db_data:/var/lib/postgresql/data/
+    environment:
+      TZ: "Europe/Moscow"
+      PGTZ: "Europe/Moscow"
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    ports:
+      - "54321:5432"
+
+  admin-django:
+    build:
+      context: ./adminka
+    <<: *app
+    volumes:
+      - ./adminka:/usr/src/app/
+    depends_on:
+      admin-database:
+        condition: service_healthy
+    ports:
+      - "8081:8000"
+
   auth-redis:
     image: redis:6.0-alpine
     volumes:
@@ -63,7 +96,7 @@ services:
     environment:
       - REDIS_HOSTS=local:auth-redis:6379
     ports:
-      - "8081:8081"
+      - "8090:8081"
 
   simple_api:
     build:
@@ -79,3 +112,4 @@ services:
 volumes:
   auth_db_data:
   auth_redis_volume:
+  admin_db_data:

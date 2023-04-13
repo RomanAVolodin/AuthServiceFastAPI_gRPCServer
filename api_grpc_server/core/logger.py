@@ -22,7 +22,7 @@ LOGGING = {  # noqa: WPS407
         'access': {'formatter': 'access', 'class': 'logging.StreamHandler', 'stream': 'ext://sys.stdout',},
     },
     'loggers': {
-        '': {'handlers': LOG_DEFAULT_HANDLERS, 'level': 'INFO'},
+        "": {'handlers': LOG_DEFAULT_HANDLERS, 'level': 'INFO'},
         'uvicorn.error': {'level': 'INFO'},
         'uvicorn.access': {'handlers': ['access'], 'level': 'INFO', 'propagate': False,},
     },

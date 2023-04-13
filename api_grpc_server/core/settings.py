@@ -32,6 +32,7 @@ class Settings(BaseSettings):
     project_description: str = 'Light auth microservice'
 
     authjwt_secret_key: str = ...
+    authjwt_algorithm: str = ...
     authjwt_denylist_enabled: bool = True
     authjwt_denylist_token_checks: set = {'access', 'refresh'}
     authjwt_access_token_expires: timedelta = timedelta(minutes=60)
@@ -41,7 +42,7 @@ class Settings(BaseSettings):
     refresh_token_expires_seconds: int = authjwt_refresh_token_expires.total_seconds()
 
     db = DataBaseSettings()
-    database_dsn: PostgresDsn = f'postgresql+asyncpg://{db.user}:{db.password}@{db.host}:{db.port}/{db.db}'
+    database_dsn: PostgresDsn = (f'postgresql+asyncpg://{db.user}:{db.password}@{db.host}:{db.port}/{db.db}')
     log_sql_queries: bool = False
 
     redis = RedisSettings()

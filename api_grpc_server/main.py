@@ -38,12 +38,14 @@ async def startup():
     redis_db.redis = Redis(host=settings.redis.host, port=settings.redis.port, db=0, decode_responses=True)
     if settings.debug_mode:
         from models.user import User
+
         await create_database()
 
 
 @app.on_event('shutdown')
 async def shutdown():
     await redis_db.redis.close()
+
 
 @AuthJWT.load_config
 def get_config():
@@ -64,7 +66,7 @@ async def check_if_token_in_denylist(decrypted_token):
 
 
 app.include_router(
-    users_router, prefix='/api/v1/users', tags=['users'], dependencies=[Depends(get_current_user_global)]
+    users_router, prefix='/api/v1/users', tags=['users'], dependencies=[Depends(get_current_user_global)],
 )
 app.include_router(auth_router, prefix='/api/v1/auth', tags=['auth'])
 

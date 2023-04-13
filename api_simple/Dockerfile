@@ -1,4 +1,4 @@
-FROM --platform=linux/amd64 python:3.10.2-buster
+FROM --platform=linux/amd64 python:3.11.3-buster
 
 WORKDIR /usr/src/app
 
