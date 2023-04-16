@@ -5,9 +5,12 @@ from datetime import datetime
 from sqlalchemy import Boolean, Column, DateTime, Enum, ForeignKey, Index, String
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
-from werkzeug.security import check_password_hash, generate_password_hash
+from passlib.context import CryptContext
 
 from db.db import Base
+
+
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
 class UserRole(enum.Enum):
@@ -37,13 +40,13 @@ class User(Base):
 
     def __init__(self, email: str, password: str, first_name: str, last_name: str) -> None:
         self.email = email
-        self.password = generate_password_hash(password)
+        self.password = pwd_context.hash(password)
         self.first_name = first_name
         self.last_name = last_name
         self.is_active = True
 
     def check_password(self, password: str) -> bool:
-        return check_password_hash(self.password, password)
+        return pwd_context.verify(password, self.password)
 
     def __repr__(self) -> str:
         return f'<id {self.id}>'

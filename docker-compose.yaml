@@ -39,7 +39,7 @@ services:
       TZ: "Europe/Moscow"
       PGTZ: "Europe/Moscow"
     ports:
-      - "5432:5432"
+      - "54320:5432"
 
   admin-database:
     image: postgres:14

@@ -2,7 +2,7 @@ import http
 import time
 
 import grpc
-import jwt
+from jose import jwt
 from fastapi import HTTPException, Request
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 

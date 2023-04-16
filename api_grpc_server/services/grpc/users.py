@@ -1,7 +1,7 @@
 import time
 
 import grpc
-import jwt
+from jose import jwt
 
 from core.grpc import users_pb2, users_pb2_grpc
 from core.settings import settings
