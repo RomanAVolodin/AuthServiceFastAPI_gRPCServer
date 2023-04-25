@@ -27,14 +27,15 @@ class JWTBearer(HTTPBearer):
         if credentials:
             if not credentials.scheme == 'Bearer':
                 raise HTTPException(status_code=http.HTTPStatus.UNAUTHORIZED, detail='Invalid authentication scheme.')
-            if not self.verify_jwt(credentials.credentials):
+            decoded_token = self.parse_token(credentials.credentials)
+            if not decoded_token:
                 raise HTTPException(status_code=http.HTTPStatus.FORBIDDEN, detail='Invalid token or expired token.')
-            return credentials.credentials
+            return decoded_token
         raise HTTPException(status_code=http.HTTPStatus.FORBIDDEN, detail='Invalid authorization code.')
 
     @staticmethod
-    def verify_jwt(jwt_token: str) -> bool:
-        return decode_token(jwt_token) is not None
+    def parse_token(jwt_token: str) -> dict | None:
+        return decode_token(jwt_token)
 
 
 security_jwt_local = JWTBearer()
