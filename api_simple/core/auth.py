@@ -2,12 +2,11 @@ import http
 import time
 
 import grpc
-from jose import jwt
+from core.grpc import users_pb2, users_pb2_grpc
+from core.settings import settings
 from fastapi import HTTPException, Request
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
-
-from core.grpc import users_pb2_grpc, users_pb2
-from core.settings import settings
+from jose import jwt
 
 
 def decode_token(token: str) -> dict | None:

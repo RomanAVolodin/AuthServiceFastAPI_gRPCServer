@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+
+
+<div class="container">
+    <div class="row">
+      <h2 style="text-align:center">Вход/регистрация через социальные сети</h2>
+
+      {% if code %}
+          Передайте этот код в соотвествующий эндпоинт:
+        <p>{{ code }}</p>
+      {% endif %}
+
+      <div class="col">
+        <a href="{{ yandex_authorization_url }}" class="twitter btn">
+          <i class="fa fa-yandex fa-fw"></i> Login with Yandex
+        </a>
+        <a href="{{ google_authorization_url }}" class="google btn">
+          <i class="fa fa-google fa-fw"></i> Login with Google+
+        </a>
+      </div>
+
+    </div>
+
+</div>
+
+
+
+</body>
+</html>

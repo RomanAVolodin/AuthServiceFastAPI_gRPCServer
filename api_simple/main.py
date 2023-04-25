@@ -1,9 +1,7 @@
-from api.v1.routes import router
-
 import uvicorn
-from fastapi import FastAPI, Depends
-
+from api.v1.routes import router
 from core.auth import security_jwt_local, security_jwt_remote
+from fastapi import Depends, FastAPI
 
 app = FastAPI()
 

@@ -2,7 +2,6 @@ from typing import Annotated
 from uuid import UUID
 
 import grpc
-
 from core.auth import security_jwt_local
 from core.grpc import users_pb2, users_pb2_grpc
 from core.settings import settings
