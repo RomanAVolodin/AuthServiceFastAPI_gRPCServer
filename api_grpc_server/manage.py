@@ -1,11 +1,11 @@
 from asyncio import run as aiorun
-from faker import Faker
+
 import typer
+from faker import Faker
 
 from db.db import async_session
 from schemas.user import UserCreateDto
 from services.user_repository import users_crud
-
 
 fake = Faker()
 

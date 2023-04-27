@@ -53,6 +53,10 @@ import users_pb2 as users__pb2` ---> `from . import users_pb2 as users__pb2
 
 http://localhost:8080/api/openapi#/
 
+Авторизация через внешних провайдеров в виде простенького фронта http://localhost:8080/api/v1/socials/
+пришедший код несем в http://localhost:8080/api/v1/socials/login/
+
+
 ### API мелкое приложение для пробы gRPC клиента (требует авторизации, пользователи из предыдущего сервиса)
 
 http://localhost:8085/docs

@@ -2,11 +2,10 @@ import asyncio
 import logging
 
 import grpc
+from fastapi import Depends, FastAPI
 
 from core.grpc import users_pb2_grpc
 from core.settings import settings
-from fastapi import FastAPI, Depends
-
 from services.grpc.users import UsersFetcher
 
 app = FastAPI(dependencies=[Depends(UsersFetcher)])

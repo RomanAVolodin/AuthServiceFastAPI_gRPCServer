@@ -1,9 +1,10 @@
+import uuid
 from datetime import datetime
 from uuid import UUID
 
 from pydantic import BaseModel, EmailStr, validator
 
-from models.user import UserRole
+from models.user import SocialNetworksEnum, UserRole
 
 
 class UserLoginDto(BaseModel):
@@ -55,3 +56,15 @@ class UserUpdateRoleDto(BaseModel):
 
     class Config:
         use_enum_values = True
+
+
+class SocialCreateDto(BaseModel):
+    user_id: UUID
+    social_id: str
+    social_name: SocialNetworksEnum
+    full_prov_data: str | None = None
+
+
+class SocialUpdateDto(BaseModel):
+    social_name: str
+    full_prov_data: str | None = None

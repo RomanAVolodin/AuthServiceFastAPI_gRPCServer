@@ -1,90 +1,72 @@
 from abc import ABC, abstractmethod
-import json
-import os
 
-from flask import Request
-from werkzeug.exceptions import HTTPException
+import httpx as httpx
+from async_oauthlib import OAuth2Session
+from fastapi import status
+from fastapi.exceptions import HTTPException
+from sqlalchemy.ext.asyncio import AsyncSession
 
-from helpers.auth_helpers import get_or_create_user_by_social_creds
-from models import SocialNetworksEnum, User
-from settings.extensions import fb, yandex, google
+from core.settings import settings
+from models.user import SocialNetworksEnum, User
+from services.socials_repository import socials_crud
 
 
 class SocialNetworkProvider(ABC):
     @abstractmethod
-    def process_user(self, request: Request) -> User:
-        pass
+    async def process_user(self, db: AsyncSession, code: str, provider: OAuth2Session) -> User:
+        ...
+
+    async def fetch_data(
+        self, code: str, provider: OAuth2Session, auth_token_url: str, userinfo_url: str, client_secret: str
+    ):
+        token = await provider.fetch_token(auth_token_url, client_secret=client_secret, code=code,)
+        async with httpx.AsyncClient() as client:
+            headers = {
+                'Authorization': f'OAuth {token["access_token"]}',
+            }
+            r = await client.get(userinfo_url, headers=headers)
+        data = r.json()
+        return data
 
 
-def get_provider(provider: str) -> SocialNetworkProvider:
+def get_provider(provider: SocialNetworksEnum) -> SocialNetworkProvider:
     """
     'match --- case' still new and not obvious
     """
-    provider = provider.lower()
-    if provider == SocialNetworksEnum.Yandex.name.lower():
+    if provider == SocialNetworksEnum.Yandex:
         return Yandex()
-    if provider == SocialNetworksEnum.Google.name.lower():
+    if provider == SocialNetworksEnum.Google:
         return Google()
-    if provider == SocialNetworksEnum.Facebook.name.lower():
-        return Facebook()
-    raise HTTPException('Wrong credentials')
-
-
-class Facebook(SocialNetworkProvider):
-    def process_user(self, request: Request) -> User:
-        code = request.json.get('code', None)
-        fb.fetch_token(
-            os.getenv('FACEBOOK_AUTH_TOKEN_URL'),
-            client_secret=os.getenv('FACEBOOK_CLIENT_SECRET'),
-            code=code,
-        )
-        r = fb.get(os.getenv('FACEBOOK_USERINFO_URL'))
-        data = json.loads(r.content)
-        return get_or_create_user_by_social_creds(
-            social_id=data['id'],
-            social_name=SocialNetworksEnum.Facebook,
-            email=data.get('email'),
-            first_name=data.get('first_name'),
-            last_name=data.get('last_name'),
-            full_prov_data=data
-        )
+    raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail='Wrong credentials')
 
 
 class Yandex(SocialNetworkProvider):
-    def process_user(self, request: Request) -> User:
-        code = request.json.get('code', None)
-        yandex.fetch_token(
-            os.getenv('YANDEX_AUTH_TOKEN_URL'),
-            client_secret=os.getenv('YANDEX_CLIENT_SECRET'),
-            code=code,
+    async def process_user(self, db: AsyncSession, code: str, provider: OAuth2Session) -> User:
+        data = await self.fetch_data(
+            code, provider, settings.yandex_auth_token_url, settings.yandex_userinfo_url, settings.yandex_client_secret,
         )
-        r = yandex.get(os.getenv('YANDEX_USERINFO_URL'))
-        data = json.loads(r.content)
-        return get_or_create_user_by_social_creds(
+        return await socials_crud.get_or_create_user_by_social_creds(
+            db,
             social_id=data['id'],
             social_name=SocialNetworksEnum.Yandex,
             email=data.get('default_email'),
             first_name=data.get('first_name'),
             last_name=data.get('last_name'),
-            full_prov_data=data
+            full_prov_data=data,
         )
 
 
 class Google(SocialNetworkProvider):
-    def process_user(self, request: Request) -> User:
-        code = request.json.get('code', None)
-        google.fetch_token(
-            os.getenv('GOOGLE_AUTH_TOKEN_URL'),
-            client_secret=os.getenv('GOOGLE_CLIENT_SECRET'),
-            code=code,
+    async def process_user(self, db: AsyncSession, code: str, provider: OAuth2Session) -> User:
+        data = await self.fetch_data(
+            code, provider, settings.google_auth_token_url, settings.google_userinfo_url, settings.google_client_secret,
         )
-        r = google.get(os.getenv('GOOGLE_USERINFO_URL'))
-        data = json.loads(r.content)
-        return get_or_create_user_by_social_creds(
+        return await socials_crud.get_or_create_user_by_social_creds(
+            db,
             social_id=data['id'],
             social_name=SocialNetworksEnum.Google,
             email=data.get('email'),
             first_name=data.get('given_name'),
             last_name=data.get('family_name'),
-            full_prov_data=data
+            full_prov_data=data,
         )

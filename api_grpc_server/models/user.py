@@ -2,15 +2,14 @@ import enum
 import uuid
 from datetime import datetime
 
-from sqlalchemy import Boolean, Column, DateTime, Enum, ForeignKey, Index, String
-from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy.orm import relationship
 from passlib.context import CryptContext
+from sqlalchemy import JSON, Boolean, Column, DateTime, Enum, ForeignKey, Index, String, Text, UniqueConstraint
+from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.orm import backref, relationship
 
 from db.db import Base
 
-
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+pwd_context = CryptContext(schemes=['bcrypt'], deprecated='auto')
 
 
 class UserRole(enum.Enum):
@@ -59,13 +58,13 @@ class LoginHistory(Base):
     date = Column(DateTime, default=datetime.utcnow)
     user_agent = Column(String(), nullable=False)
     user_ip = Column(String(100), nullable=False)
-    user_id = Column(UUID(as_uuid=True), ForeignKey('users.id'))
+    user_id = Column(UUID(as_uuid=True), ForeignKey('users.id', ondelete='CASCADE'))
     access_token = Column(UUID(as_uuid=True), nullable=True)
     refresh_token = Column(UUID(as_uuid=True), nullable=True)
 
     user = relationship('User', uselist=False, back_populates='history')
 
-    def __init__(self, user_id: UUID, user_agent: str, user_ip: str, access_token: str, refresh_token: str,) -> None:
+    def __init__(self, user_id: UUID, user_agent: str, user_ip: str, access_token: str, refresh_token: str) -> None:
         self.user_id = user_id
         self.user_agent = user_agent
         self.user_ip = user_ip
@@ -74,3 +73,33 @@ class LoginHistory(Base):
 
     def __repr__(self) -> str:
         return f'<id {self.id}>'
+
+
+class SocialNetworksEnum(enum.Enum):
+    Yandex = 'Yandex'
+    Google = 'Google'
+
+
+class SocialAccount(Base):
+    __tablename__ = 'social_accounts'
+
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    user_id = Column(UUID(as_uuid=True), ForeignKey('users.id'), nullable=False)
+    user = relationship(User, backref=backref('social_accounts', cascade='all,delete', lazy=True),)
+
+    social_id = Column(Text, nullable=False)
+    social_name = Column(Enum(SocialNetworksEnum))
+    full_prov_data = Column(JSON, nullable=True)
+
+    __table_args__ = (UniqueConstraint('social_id', 'social_name', name='social_pk'),)
+
+    def __init__(
+        self, user_id: UUID, social_id: str, social_name: SocialNetworksEnum, full_prov_data: str | None = None
+    ) -> None:
+        self.user_id = user_id
+        self.social_id = social_id
+        self.social_name = social_name
+        self.full_prov_data = full_prov_data
+
+    def __repr__(self):
+        return f'<SocialAccount {self.social_name}:{self.user_id}>'

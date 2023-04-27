@@ -98,7 +98,7 @@ services:
     ports:
       - "8090:8081"
 
-  simple_api:
+  simple-api:
     build:
       context: ./api_simple
     <<: *app
@@ -108,6 +108,11 @@ services:
       - "8085:8085"
     depends_on:
       - auth-database
+
+  jaeger-service:
+    image: jaegertracing/all-in-one:latest
+    ports:
+      - "16686:16686"
 
 volumes:
   auth_db_data:
