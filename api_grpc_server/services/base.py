@@ -1,3 +1,4 @@
+import logging
 from abc import ABC, abstractmethod
 from typing import Any, Generic, Type, TypeVar
 
@@ -50,12 +51,12 @@ class RepositoryDB(Repository, Generic[ModelType, CreateSchemaType, UpdateSchema
         return results.scalars().all()
 
     async def create(self, db: AsyncSession, *, obj_in: CreateSchemaType) -> ModelType:
-        print('------------', obj_in)
         obj_in_data = jsonable_encoder(obj_in)
         db_obj = self._model(**obj_in_data)
         db.add(db_obj)
+        logging.info('------------ before commit %s', db_obj.__dict__)
         await db.commit()
-        await db.refresh(db_obj)
+        logging.info('------------ after commit %s', db_obj.__dict__)
         return db_obj
 
     async def update(

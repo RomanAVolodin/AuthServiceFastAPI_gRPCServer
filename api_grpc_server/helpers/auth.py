@@ -23,9 +23,7 @@ def roles_required(roles_list: list[UserRole]):
                     'This operation is forbidden for you', status_code=status.HTTP_403_FORBIDDEN,
                 )
             return await function(*args, **kwargs)
-
         return wrapper
-
     return decorator
 
 

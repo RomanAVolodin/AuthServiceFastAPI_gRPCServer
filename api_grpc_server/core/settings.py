@@ -42,7 +42,7 @@ class Settings(BaseSettings):
     refresh_token_expires_seconds: int = authjwt_refresh_token_expires.total_seconds()
 
     db = DataBaseSettings()
-    database_dsn: PostgresDsn = (f'postgresql+asyncpg://{db.user}:{db.password}@{db.host}:{db.port}/{db.db}')
+    database_dsn: PostgresDsn = f'postgresql+asyncpg://{db.user}:{db.password}@{db.host}:{db.port}/{db.db}'
     log_sql_queries: bool = False
 
     redis = RedisSettings()
