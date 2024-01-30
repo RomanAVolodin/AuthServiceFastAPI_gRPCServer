@@ -25,7 +25,9 @@ class CustomBackend(BaseBackend):
         data = response.json()
 
         try:
-            user, created = User.objects.get_or_create(id=data['id'],)
+            user, created = User.objects.get_or_create(
+                id=data['id'],
+            )
             user.email = data.get('email')
             user.first_name = data.get('first_name')
             user.last_name = data.get('last_name')

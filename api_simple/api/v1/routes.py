@@ -28,7 +28,13 @@ async def get_user(user_id: UUID):
 )
 async def get_users_by_ids(
     ids: Annotated[
-        list[UUID], Body(example=['a184c3b4-1038-418c-bd50-4405bb813154', 'bc85cf72-c892-4083-ade4-9b371c1c39eb',]),
+        list[UUID],
+        Body(
+            example=[
+                'a184c3b4-1038-418c-bd50-4405bb813154',
+                'bc85cf72-c892-4083-ade4-9b371c1c39eb',
+            ]
+        ),
     ],
     user: Annotated[dict, Depends(security_jwt_local)],
 ):
@@ -40,7 +46,8 @@ async def get_users_by_ids(
 
 
 @router.get(
-    '/all-users', description='Список всех пользователей',
+    '/all-users',
+    description='Список всех пользователей',
 )
 async def all_users():
     async with grpc.aio.insecure_channel(f'{settings.grpc_host}:{settings.grpc_port}') as channel:

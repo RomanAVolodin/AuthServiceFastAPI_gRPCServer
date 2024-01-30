@@ -17,14 +17,34 @@ LOGGING = {  # noqa: WPS407
         },
     },
     'handlers': {
-        'console': {'level': 'DEBUG', 'class': 'logging.StreamHandler', 'formatter': 'verbose',},
-        'default': {'formatter': 'default', 'class': 'logging.StreamHandler', 'stream': 'ext://sys.stdout',},
-        'access': {'formatter': 'access', 'class': 'logging.StreamHandler', 'stream': 'ext://sys.stdout',},
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+            'formatter': 'verbose',
+        },
+        'default': {
+            'formatter': 'default',
+            'class': 'logging.StreamHandler',
+            'stream': 'ext://sys.stdout',
+        },
+        'access': {
+            'formatter': 'access',
+            'class': 'logging.StreamHandler',
+            'stream': 'ext://sys.stdout',
+        },
     },
     'loggers': {
-        "": {'handlers': LOG_DEFAULT_HANDLERS, 'level': 'INFO'},
+        '': {'handlers': LOG_DEFAULT_HANDLERS, 'level': 'INFO'},
         'uvicorn.error': {'level': 'INFO'},
-        'uvicorn.access': {'handlers': ['access'], 'level': 'INFO', 'propagate': False,},
+        'uvicorn.access': {
+            'handlers': ['access'],
+            'level': 'INFO',
+            'propagate': False,
+        },
     },
-    'root': {'level': 'INFO', 'formatter': 'verbose', 'handlers': LOG_DEFAULT_HANDLERS,},
+    'root': {
+        'level': 'INFO',
+        'formatter': 'verbose',
+        'handlers': LOG_DEFAULT_HANDLERS,
+    },
 }

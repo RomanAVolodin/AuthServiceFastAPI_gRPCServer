@@ -40,7 +40,8 @@ class AuthService:
         )
 
         await history_crud.create(
-            db=db, obj_in=history,
+            db=db,
+            obj_in=history,
         )
         return {'access_token': access_token, 'refresh_token': refresh_token}
 

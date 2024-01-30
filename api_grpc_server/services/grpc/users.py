@@ -20,7 +20,9 @@ def decode_token(token: str) -> dict | None:
 
 class UsersFetcher(users_pb2_grpc.DetailerServicer):
     async def DetailsByToken(
-        self, request: users_pb2.GetUserByTokenRequest, context: grpc.aio.ServicerContext,
+        self,
+        request: users_pb2.GetUserByTokenRequest,
+        context: grpc.aio.ServicerContext,
     ) -> users_pb2.UserResponse:
         user_id = decode_token(request.token).get('sub')
         if not user_id:
@@ -34,7 +36,9 @@ class UsersFetcher(users_pb2_grpc.DetailerServicer):
             return self.__generate_user_response(user)
 
     async def DetailsById(
-        self, request: users_pb2.GetUserRequest, context: grpc.aio.ServicerContext,
+        self,
+        request: users_pb2.GetUserRequest,
+        context: grpc.aio.ServicerContext,
     ) -> users_pb2.UserResponse:
         async with async_session() as session:
             item = await users_crud.get(db=session, id=request.id)
@@ -42,7 +46,9 @@ class UsersFetcher(users_pb2_grpc.DetailerServicer):
             return self.__generate_user_response(user)
 
     async def MultipleDetailsByIds(
-        self, request: users_pb2.GetMultipleUserRequest, context: grpc.aio.ServicerContext,
+        self,
+        request: users_pb2.GetMultipleUserRequest,
+        context: grpc.aio.ServicerContext,
     ) -> users_pb2.MultipleUserResponse:
         async with async_session() as session:
             items = await users_crud.get_all_by_ids(db=session, ids=request.ids)
@@ -51,7 +57,9 @@ class UsersFetcher(users_pb2_grpc.DetailerServicer):
         return users_pb2.MultipleUserResponse(users=users_response)
 
     async def GetAllUsers(
-        self, request: users_pb2.GetAllUsersRequest, context: grpc.aio.ServicerContext,
+        self,
+        request: users_pb2.GetAllUsersRequest,
+        context: grpc.aio.ServicerContext,
     ) -> users_pb2.MultipleUserResponse:
         async with async_session() as session:
             items = await users_crud.get_multi(db=session)

@@ -49,7 +49,11 @@ app = FastAPI(
 app.mount('/static', StaticFiles(directory='static'), name='static')
 
 app.add_middleware(
-    CORSMiddleware, allow_origins=['*'], allow_credentials=True, allow_methods=['*'], allow_headers=['*'],
+    CORSMiddleware,
+    allow_origins=['*'],
+    allow_credentials=True,
+    allow_methods=['*'],
+    allow_headers=['*'],
 )
 
 
@@ -75,7 +79,10 @@ async def startup():
         redirect_uri=settings.social_auth_redirect_url,
         scope='https://www.googleapis.com/auth/userinfo.email openid https://www.googleapis.com/auth/userinfo.profile',
     )
-    extensions.yandex = OAuth2Session(settings.yandex_client_id, redirect_uri=settings.social_auth_redirect_url,)
+    extensions.yandex = OAuth2Session(
+        settings.yandex_client_id,
+        redirect_uri=settings.social_auth_redirect_url,
+    )
 
     if settings.debug_mode:
         from models.user import User
@@ -114,7 +121,10 @@ async def root():
 
 
 app.include_router(
-    users_router, prefix='/api/v1/users', tags=['users'], dependencies=[Depends(get_current_user_global)],
+    users_router,
+    prefix='/api/v1/users',
+    tags=['users'],
+    dependencies=[Depends(get_current_user_global)],
 )
 app.include_router(auth_router, prefix='/api/v1/auth', tags=['auth'])
 app.include_router(socials_router, prefix='/api/v1/socials', tags=['socials'])
@@ -126,5 +136,10 @@ if settings.enable_tracer:
 
 if __name__ == '__main__':
     uvicorn.run(
-        'main:app', host='0.0.0.0', port=settings.app_port, log_config=LOGGING, log_level=logging.DEBUG, reload=True,
+        'main:app',
+        host='0.0.0.0',
+        port=settings.app_port,
+        log_config=LOGGING,
+        log_level=logging.DEBUG,
+        reload=True,
     )

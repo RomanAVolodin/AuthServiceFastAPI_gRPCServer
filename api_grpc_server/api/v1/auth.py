@@ -25,7 +25,9 @@ async def create_user(user_dto: UserCreateDto, db: AsyncSession = Depends(get_se
 
 @router.post('/login_inner', response_model=UserResponse)
 async def login_inner(
-    request: Request, user_dto: UserLoginDto, db: AsyncSession = Depends(get_session),
+    request: Request,
+    user_dto: UserLoginDto,
+    db: AsyncSession = Depends(get_session),
 ) -> UserResponse:
     user = await users_crud.get_by_email(db=db, email=user_dto.email)
     if not user:
@@ -33,10 +35,13 @@ async def login_inner(
     if not user.check_password(user_dto.password):
         raise AuthException('Bad email or password', status_code=status.HTTP_401_UNAUTHORIZED)
     history = LoginHistoryCreateDto(
-        user_id=user.id, user_agent=request.headers.get('User-Agent'), user_ip=request.client.host,
+        user_id=user.id,
+        user_agent=request.headers.get('User-Agent'),
+        user_ip=request.client.host,
     )
     await history_crud.create(
-        db=db, obj_in=history,
+        db=db,
+        obj_in=history,
     )
     return user
 

@@ -40,7 +40,11 @@ class Migration(migrations.Migration):
                     ),
                 ),
             ],
-            options={'verbose_name': 'Movie', 'verbose_name_plural': 'Movies', 'db_table': 'film_work',},
+            options={
+                'verbose_name': 'Movie',
+                'verbose_name_plural': 'Movies',
+                'db_table': 'film_work',
+            },
         ),
         migrations.CreateModel(
             name='Genre',
@@ -51,7 +55,11 @@ class Migration(migrations.Migration):
                 ('name', models.CharField(max_length=255, verbose_name='name')),
                 ('description', models.TextField(blank=True, verbose_name='description')),
             ],
-            options={'verbose_name': 'Genre', 'verbose_name_plural': 'Genres', 'db_table': 'genre',},
+            options={
+                'verbose_name': 'Genre',
+                'verbose_name_plural': 'Genres',
+                'db_table': 'genre',
+            },
         ),
         migrations.CreateModel(
             name='Person',
@@ -61,7 +69,11 @@ class Migration(migrations.Migration):
                 ('modified', models.DateTimeField(auto_now=True)),
                 ('full_name', models.CharField(max_length=100)),
             ],
-            options={'verbose_name': 'Person', 'verbose_name_plural': 'Persons', 'db_table': 'person',},
+            options={
+                'verbose_name': 'Person',
+                'verbose_name_plural': 'Persons',
+                'db_table': 'person',
+            },
         ),
         migrations.CreateModel(
             name='PersonFilmWork',

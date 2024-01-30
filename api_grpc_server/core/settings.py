@@ -43,6 +43,7 @@ class Settings(BaseSettings):
 
     db = DataBaseSettings()
     database_dsn: PostgresDsn = f'postgresql+asyncpg://{db.user}:{db.password}@{db.host}:{db.port}/{db.db}'
+    # database_dsn_new: PostgresDsn = PostgresDsn.build()
     log_sql_queries: bool = False
 
     redis = RedisSettings()

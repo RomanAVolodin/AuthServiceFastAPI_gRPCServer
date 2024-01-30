@@ -32,7 +32,10 @@ async def read_users(
 @router.get('/details/{user_id}', response_model=UserResponse)
 @roles_required(roles_list=[UserRole.admin, UserRole.privileged_user])
 async def read_user(
-    *, request: AuthRequest, user_id: uuid.UUID, db: AsyncSession = Depends(get_session),
+    *,
+    request: AuthRequest,
+    user_id: uuid.UUID,
+    db: AsyncSession = Depends(get_session),
 ) -> UserResponse:
     entity = await users_crud.get(db=db, id=user_id)
     if not entity:
@@ -43,7 +46,10 @@ async def read_user(
 @router.post('/update-role', response_model=UserResponse)
 @roles_required(roles_list=[UserRole.admin])
 async def read_user(
-    *, request: AuthRequest, dto: UserUpdateRoleDto, db: AsyncSession = Depends(get_session),
+    *,
+    request: AuthRequest,
+    dto: UserUpdateRoleDto,
+    db: AsyncSession = Depends(get_session),
 ) -> UserResponse:
     entity = await users_crud.set_role_for_user(db=db, user_id=dto.user_id, role=dto.role)
     return entity

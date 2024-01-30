@@ -3,7 +3,7 @@ import uuid
 from datetime import datetime
 
 from passlib.context import CryptContext
-from sqlalchemy import JSON, Boolean, Column, DateTime, Enum, ForeignKey, Index, String, Text, UniqueConstraint
+from sqlalchemy import JSON, Boolean, Column, DateTime, Enum, ForeignKey, Index, String, Text, text, UniqueConstraint
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import backref, relationship
 
@@ -51,8 +51,32 @@ class User(Base):
         return f'<id {self.id}>'
 
 
+def create_partition(target, connection, **kw) -> None:
+    """creating partition by user_sign_in"""
+    connection.execute(
+        text(
+            """CREATE TABLE IF NOT EXISTS "logins_history_smart" PARTITION OF "logins_history" FOR VALUES IN ('smart')"""
+        )
+    )
+    connection.execute(
+        text(
+            """CREATE TABLE IF NOT EXISTS "logins_history_mobile" PARTITION OF "logins_history" FOR VALUES IN ('mobile')"""
+        )
+    )
+    connection.execute(
+        text("""CREATE TABLE IF NOT EXISTS "logins_history_web" PARTITION OF "logins_history" FOR VALUES IN ('web')""")
+    )
+
+
 class LoginHistory(Base):
     __tablename__ = 'logins_history'
+    __table_args__ = (
+        UniqueConstraint('id', 'user_device_type'),
+        {
+            'postgresql_partition_by': 'LIST (user_device_type)',
+            'listeners': [('after_create', create_partition)],
+        },
+    )
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     date = Column(DateTime, default=datetime.utcnow)
@@ -61,6 +85,7 @@ class LoginHistory(Base):
     user_id = Column(UUID(as_uuid=True), ForeignKey('users.id', ondelete='CASCADE'))
     access_token = Column(UUID(as_uuid=True), nullable=True)
     refresh_token = Column(UUID(as_uuid=True), nullable=True)
+    user_device_type = Column(Text, primary_key=True)
 
     user = relationship('User', uselist=False, back_populates='history')
 
@@ -85,7 +110,10 @@ class SocialAccount(Base):
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     user_id = Column(UUID(as_uuid=True), ForeignKey('users.id'), nullable=False)
-    user = relationship(User, backref=backref('social_accounts', cascade='all,delete', lazy=True),)
+    user = relationship(
+        User,
+        backref=backref('social_accounts', cascade='all,delete', lazy=True),
+    )
 
     social_id = Column(Text, nullable=False)
     social_name = Column(Enum(SocialNetworksEnum))
