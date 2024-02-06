@@ -9,6 +9,7 @@ class LoginHistoryCreateDto(BaseModel):
     user_id: UUID
     access_token: UUID | None
     refresh_token: UUID | None
+    user_device_type: str
 
 
 class LoginHistoryResponse(BaseModel):
@@ -17,6 +18,7 @@ class LoginHistoryResponse(BaseModel):
     user_id: UUID
     access_token: UUID | None
     refresh_token: UUID | None
+    user_device_type: str
 
     class Config:
         orm_mode = True

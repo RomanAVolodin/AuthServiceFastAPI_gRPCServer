@@ -37,6 +37,7 @@ class AuthService:
             user_ip=request.client.host,
             access_token=access_jti,
             refresh_token=refresh_jti,
+            user_device_type='web',
         )
 
         await history_crud.create(
